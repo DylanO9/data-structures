@@ -17,12 +17,25 @@ typedef struct {
 
 Vector *init_vector(size_t elem_size);
 void append(Vector *v, void *object);
+void *get(Vector *v, unsigned int index);
 
 // Driver function
 int main() {
-    Vector *new_vector = init_vector(sizeof(int)); 
+    Vector *v = init_vector(sizeof(int)); 
     int x = 5;
-    append(new_vector, &x);
+    append(v, &x);
+    append(v, &x);
+    append(v, &x);
+    append(v, &x);
+    append(v, &x);
+    append(v, &x);
+    append(v, &x);
+    int *my_x = get(v, 6);
+    if (my_x == NULL) {
+        printf("My access was bad!\n");
+        return 0;
+    }
+    printf("My prev value: %d\nv[0]: %d\n", x, *my_x);
     return 0;
 }
 
@@ -37,16 +50,24 @@ Vector *init_vector(size_t elem_size) {
 
 void append(Vector *v, void *object) {
     if (v->size + 1 > v->capacity) {
-        size_t new_size = v->capacity * 2;
-        v->data = realloc(v->data, new_size);
-        if (v->data == NULL) {
+        size_t new_capacity = v->capacity * 2;
+        void *new_data = realloc(v->data, (new_capacity * v->elem_size));
+        if (new_data == NULL) {
             fprintf(stderr, "Bad realloc\n");
             exit(EXIT_FAILURE);
         }
+        v->data = new_data;
+        v->capacity = new_capacity;
     }
     void *next_element = v->data + (v->size * v->elem_size); 
     memcpy(next_element, object, v->elem_size);
     v->size++;
 }
 
-
+void *get(Vector *v, unsigned int index) {
+    if (index < 0 || index > v->size - 1) {
+        fprintf(stderr, "Trying to access an out of range index\n");
+        return NULL;
+    } 
+    return v->data + (v->elem_size * index);
+}
