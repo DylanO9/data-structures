@@ -22,7 +22,7 @@ void append(Vector *v, void *object);
 int main() {
     Vector *new_vector = init_vector(sizeof(int)); 
     int x = 5;
-    new_vector(v, &x);
+    append(new_vector, &x);
     return 0;
 }
 
