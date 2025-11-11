@@ -20,6 +20,7 @@ void append(Vector *v, void *object);
 void *get(Vector *v, unsigned int index);
 void *search(Vector *v, void *object);
 int pop(Vector *v);
+void free_vector(Vector *v);
 
 // Driver function
 int main() {
@@ -45,6 +46,7 @@ int main() {
     pop(v);
     int *t_6 = get(v, 6);
     printf("Our [6] element is: %d\n", *t_6);
+    free(v);
     return 0;
 }
 
@@ -107,4 +109,9 @@ int pop(Vector *v) {
     memset(last_address, 0, v->elem_size);
     v->size--;
     return 1;
+}
+
+void free_vector(Vector *v) {
+    free(v->data);
+    free(v);
 }
