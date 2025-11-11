@@ -19,6 +19,7 @@ Vector *init_vector(size_t elem_size);
 void append(Vector *v, void *object);
 void *get(Vector *v, unsigned int index);
 void *search(Vector *v, void *object, size_t elem_size);
+int pop(Vector *v);
 
 // Driver function
 int main() {
@@ -41,6 +42,9 @@ int main() {
     printf("My prev value: %d\nv[0]: %d\n", x, *my_x);
     void *temp = search(v, &y, sizeof(int));
     printf("Did I find my y element? %d\nWhat was my element? %d\n", 1 ? temp != NULL : 0, *(int *)temp);
+    pop(v);
+    int *t_6 = get(v, 6);
+    printf("Our [6] element is: %d\n", *t_6);
     return 0;
 }
 
@@ -90,4 +94,11 @@ void *search(Vector *v, void *object, size_t elem_size) {
             return iterator_address;
     }
     return NULL;
+}
+
+// We don't have to decrease the capacity of our array, so we can just clear the bits
+int pop(Vector *v) {
+    void *last_address = v->data + (v->elem_size * (v->size - 1));
+    memset(last_address, 0, v->elem_size);
+    v->size--;
 }
