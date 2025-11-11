@@ -21,12 +21,16 @@ void *get(Vector *v, unsigned int index);
 void *search(Vector *v, void *object);
 int pop(Vector *v);
 void free_vector(Vector *v);
+void erase(Vector *v, size_t index);
 
 // Driver function
 int main() {
     Vector *v = init_vector(sizeof(int)); 
     int x = 5;
-    append(v, &x);
+    int z = 1;
+    append(v, &z);
+    int *z_temp = get(v, 0);
+    printf("Our [0] element is: %d\n", *z_temp);
     append(v, &x);
     append(v, &x);
     append(v, &x);
@@ -46,6 +50,9 @@ int main() {
     pop(v);
     int *t_6 = get(v, 6);
     printf("Our [6] element is: %d\n", *t_6);
+    erase(v, 0);
+    z_temp = get(v, 0);
+    printf("Our [0] element is: %d\n", *z_temp);
     free(v);
     return 0;
 }
@@ -105,7 +112,7 @@ void *search(Vector *v, void *object) {
 // We don't have to decrease the capacity of our array, so we can just clear the bits
 int pop(Vector *v) {
     if (v->size == 0) return 0;
-    void *last_address = v->data + (v->elem_size * (v->size - 1));
+    void *last_address = (char *)v->data + (v->elem_size * (v->size - 1));
     memset(last_address, 0, v->elem_size);
     v->size--;
     return 1;
@@ -114,4 +121,20 @@ int pop(Vector *v) {
 void free_vector(Vector *v) {
     free(v->data);
     free(v);
+}
+
+void erase(Vector *v, size_t index) {
+    if (index >= v->size) {
+        fprintf(stderr, "Trying to erase an index not within the vector\n");
+        return;
+    }
+    char *base = (char *)v->data;
+    char *start = base + (index * v->elem_size);
+    char *next = base + ((index + 1) * v->elem_size);
+    char *end = base + ((v->size) * v->elem_size);
+    size_t tail_length = (v->size - index - 1) * v->elem_size;
+    if (tail_length > 0) {
+        memmove(start, next, tail_length);
+    }
+    v->size--; 
 }
